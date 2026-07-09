@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "Smart Focus Lock",
+  "version": "1.0.0",
+  "description": "Blocks distracting sites in real time and syncs with your Focus Lock dashboard.",
+  "permissions": ["declarativeNetRequest", "storage", "alarms"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Smart Focus Lock"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["blocked.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

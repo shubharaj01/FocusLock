@@ -1,0 +1,5 @@
+node_modules/
+backend/focuslock.db
+backend/focuslock.db-*
+backend/.env
+frontend/dist/
