@@ -152,13 +152,14 @@ http://localhost:5173
 * Developed the frontend interface and user experience.
 * Designed responsive dashboard pages.
 * Managed GitHub repository and project documentation.
-* Tested, debugged, and refined the application.
+* Implemented website blocking functionality.
 
 ### **Pragna**
 
 * Designed the overall system architecture.
-* Assisted with planning, documentation, and testing.
+* Developed the Chrome Extension.
 * Coordinated project deliverables.
+* Tested, debugged, and refined the application.
 
 ### **Kavya**
 
@@ -168,9 +169,9 @@ http://localhost:5173
 
 ### **Kruthika**
 
-* Developed the Chrome Extension.
 * Implemented website blocking functionality.
 * Integrated the extension with the backend.
+* Assisted with planning, documentation, and testing.
 
 ---
 
