@@ -1,11 +1,8 @@
-<div align="center">
 
 # 🎯 Focus Lock
 
-### *An intelligent productivity platform for distraction free digital learning.*
+> **An intelligent productivity platform for distraction free digital learning.**
 
-
-</div>
 
 ---
 
@@ -15,7 +12,7 @@
 
 This repository serves as the primary codebase for the project and is actively maintained as development continues.
 
-> **Current Status:** 🚧 This project is actively under development, with new features and improvements being added regularly.
+> **Current Status:** 🚧 This project is actively under development.
 
 ---
 
@@ -196,11 +193,7 @@ We sincerely thank our project guide, faculty members, and teammates for their c
 
 ---
 
-<div align="center">
-
-*"Small improvements every day lead to meaningful progress."*
-
 ⭐ *If you found this project interesting, consider giving it a star.*
 
-</div>
+
 
