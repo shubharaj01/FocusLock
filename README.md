@@ -74,7 +74,7 @@ Rather than simply restricting access to distracting websites, the project encou
 
 ---
 
-## 📂 Project Structure
+## 📂 Project Structure   
 
 ```text
 Smart-Focus-Lock/
