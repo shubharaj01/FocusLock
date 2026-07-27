@@ -19,3 +19,4 @@ chrome.storage.local.get(["apiBase", "token"], async ({ apiBase, token }) => {
     console.warn("Focus Lock: could not report block event", err);
   }
 });
+                
