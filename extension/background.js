@@ -18,20 +18,84 @@ async function getSettings() {
   };
 }
 
-async function syncBlocklist() {
-  const { apiBase, token, blockingEnabled } = await getSettings();
-  if (!token) return; // not logged in yet
+// BUG FIX (Issue 1 - blocking never stops after a focus session ends):
+// Root cause: this function only ever checked the manual `blockingEnabled`
+// toggle (extension popup switch) and the per-site `active` flag. It had NO
+// awareness of the "focus session" concept that lives in the backend
+// (sessions table, driven by Start Session / End Session in the dashboard).
+// So ending a session in the dashboard never cleared the extension's rules -
+// there was simply nothing wiring the two together, which is why blocking
+// "stuck" until someone manually flipped the popup toggle off.
+//
+// Fix: treat the backend's `activeSession` (already exposed by the existing
+// /api/monitoring/today endpoint) as the source of truth for whether a
+// session is currently running, and require it - in addition to the
+// existing blockingEnabled/per-site checks - before any block rule is
+// applied. This runs on every sync (on install/startup, the 1-minute alarm,
+// and manual "Sync now"), so as soon as a session ends - whether the user
+// clicks "End Session" or just closes the tab and the backend session is
+// stopped some other way - the very next sync clears all rules. It also
+// self-heals stale state: if the extension (or its storage) was left in a
+// weird state, the next sync reconciles it against the real backend state
+// rather than trusting whatever was last cached locally.
+async function fetchActiveSession(apiBase, token) {
+  try {
+    const res = await fetch(`${apiBase}/api/monitoring/today`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.activeSession || null;
+  } catch (err) {
+    console.warn("Focus Lock: could not check active session status", err);
+    return null; // fail closed on the network error, not on blocking state
+  }
+}
 
-  // If blocking is toggled off, clear all our rules and stop.
+// BUG FIX (Issue 1): single place that clears every dynamic rule we own.
+// Used both by the "no active session" path below and available for any
+// other cleanup trigger, so there's one reliable code path for "stop all
+// blocking" instead of that logic being duplicated/drifting over time.
+async function clearAllBlockRules() {
   const existing = await chrome.declarativeNetRequest.getDynamicRules();
   const ourRuleIds = existing.map((r) => r.id);
+  if (ourRuleIds.length) {
+    await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds: ourRuleIds });
+  }
+}
 
+async function syncBlocklist() {
+  const { apiBase, token, blockingEnabled } = await getSettings();
+
+  // BUG FIX (Issue 1 - related stale-state case): previously this returned
+  // immediately on logout without touching declarativeNetRequest, so any
+  // rules that were active at logout time stayed active forever (there's no
+  // token afterwards, so no future sync could ever reach the "clear" logic
+  // below either). Now logging out also clears blocking, same as ending a
+  // session.
+  if (!token) {
+    await clearAllBlockRules();
+    return; // not logged in yet
+  }
+
+  // If blocking is toggled off, clear all our rules and stop.
   if (!blockingEnabled) {
-    if (ourRuleIds.length) {
-      await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds: ourRuleIds });
-    }
+    await clearAllBlockRules();
     return;
   }
+
+  // BUG FIX (Issue 1): no active focus session -> nothing should be blocked,
+  // regardless of the blockingEnabled toggle or the saved site list. This is
+  // the check that was missing before, and it's what actually makes
+  // blocking stop the moment a session ends (or was ended manually).
+  const activeSession = await fetchActiveSession(apiBase, token);
+  if (!activeSession) {
+    await clearAllBlockRules();
+    return;
+  }
+
+  const existing = await chrome.declarativeNetRequest.getDynamicRules();
+  const ourRuleIds = existing.map((r) => r.id);
 
   let sites = [];
   try {

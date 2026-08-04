@@ -45,7 +45,8 @@ export default function Blocker() {
       <header>
         <h2 className="text-headline-md font-bold text-on-surface">Website Blocker</h2>
         <p className="text-body-md text-on-surface-variant">
-          Keep distractions away while you study.
+          Sites here are actually blocked by the Smart Focus Lock browser extension — it syncs
+          this list automatically every minute (or instantly via "Sync now" in the extension popup).
         </p>
       </header>
 

@@ -32,7 +32,7 @@ export default function Analytics() {
     <div className="space-y-lg">
       <header>
         <h2 className="text-headline-md font-bold text-on-surface">Analytics</h2>
-        <p className="text-body-md text-on-surface-variant">Discover insights from your study sessions.</p>
+        <p className="text-body-md text-on-surface-variant">Your last 7 days, from real session and block data.</p>
       </header>
 
       <div className="grid grid-cols-12 gap-lg">

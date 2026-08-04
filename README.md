@@ -1,199 +1,62 @@
+# Smart Focus Lock
 
-# 🎯 Focus Lock
+A real study-focus app: a Chrome extension that actually blocks distracting
+sites, a backend with a real database, and a dashboard that shows live data.
 
-> **An intelligent productivity platform for distraction free digital learning.**
+## How it fits together
 
+- **`backend/`** — Express + SQLite (file-based, zero setup). Handles login,
+  your blocklist, study sessions, and every blocked-attempt event. This is the
+  single source of truth both the extension and the dashboard talk to.
+- **`extension/`** — Manifest V3 Chrome extension. Polls your blocklist from
+  the backend every minute and uses `declarativeNetRequest` to actually block
+  those domains at the network level (Chrome blocks them before the page even
+  loads — no fake overlay). Every blocked attempt is reported back to the
+  backend instantly, which is what makes the Monitoring page feel real-time.
+- **`frontend/`** — React (Vite) dashboard: Login, Study Hub, Monitoring,
+  Analytics, Website Blocker, Settings — one app, shared sidebar, real routing.
 
----
+## Run it (in this order)
 
-## 📖 Project Overview
-
-**Focus Lock** is a **Final Year Engineering Team Project** developed to create a distraction free digital learning environment for students. The application combines a modern web dashboard with a Chrome Extension to help students reduce digital distractions, monitor study sessions, and gain meaningful productivity insights.
-
-This repository serves as the primary codebase for the project and is actively maintained as development continues.
-
-> **Current Status:** 🚧 This project is actively under development.
-
----
-
-## 💡 Why Focus Lock?
-
-Online learning has made studying more accessible but also more distracting. Smart Focus Lock was created to help students maintain focus by combining website blocking, study tracking, and productivity analytics into one seamless platform.
-
-Rather than simply restricting access to distracting websites, the project encourages better study habits through insightful analytics and an intuitive user experience.
-
----
-
-## ✨ Key Features
-
-| Feature                       | Description                                           |
-| ----------------------------- | ----------------------------------------------------- |
-| 🔐 **Secure Authentication**  | User registration and login system                    |
-| 🌐 **Website Blocking**       | Block distracting websites through a Chrome Extension |
-| 📚 **Study Session Tracking** | Track and manage focused study sessions               |
-| 📊 **Productivity Analytics** | Visual insights into study performance                |
-| 📡 **Real-Time Monitoring**   | Monitor blocked website attempts instantly            |
-| ⚙️ **Custom Settings**        | Personalize your study experience                     |
-| 🎨 **Modern Dashboard**       | Responsive and user-friendly interface                |
-
-> **Note:** Additional features are currently being developed as part of the project's future scope.
-
----
-
-## 🛠️ Technology Stack
-
-| Layer                | Technologies                    |
-| -------------------- | ------------------------------- |
-| 🎨 Frontend          | React • Vite • JavaScript • CSS |
-| ⚙️ Backend           | Node.js • Express.js            |
-| 🗄️ Database         | SQLite                          |
-| 🧩 Browser Extension | Chrome Extension (Manifest V3)  |
-| 🔗 API               | REST APIs                       |
-| 🌱 Version Control   | Git • GitHub                    |
-
----
-
-## 🏛️ System Architecture
-
-```text
-                  ┌────────────────────┐
-                  │  Chrome Extension  │
-                  └─────────┬──────────┘
-                            │
-                            ▼
-                  ┌────────────────────┐
-                  │  Express Backend   │
-                  └─────────┬──────────┘
-                            │
-               ┌────────────┴────────────┐
-               ▼                         ▼
-      ┌────────────────┐        ┌─────────────────┐
-      │ React Frontend │        │ SQLite Database │
-      └────────────────┘        └─────────────────┘
-```
-
----
-
-## 📂 Project Structure   
-
-```text
-Smart-Focus-Lock/
-│
-├── backend/         # Express backend & SQLite database
-├── frontend/        # React (Vite) web application
-├── extension/       # Chrome Extension (Manifest V3)
-├── README.md
-└── .gitignore
-```
-
----
-
-## 🚀 Getting Started
-
-### 1. Clone the Repository
-
-```bash
-git clone <repository-url>
-cd smart-focus-lock
-```
-
-### 2. Start the Backend
-
+### 1. Backend
 ```bash
 cd backend
 npm install
 cp .env.example .env
 npm start
 ```
+Runs on `http://localhost:4000`. `focuslock.db` (SQLite file) is created
+automatically on first run — nothing else to configure.
 
-Backend runs on:
-
-```text
-http://localhost:4000
-```
-
----
-
-### 3. Start the Frontend
-
+### 2. Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
+Open `http://localhost:5173`. Register an account, then explore the pages —
+Study Hub, Blocker, Analytics, etc. are all live against the backend.
 
-Frontend runs on:
+### 3. Extension (this is what does the real blocking)
+1. Open `chrome://extensions` in Chrome/Edge.
+2. Turn on **Developer mode** (top right).
+3. Click **Load unpacked** and select the `extension/` folder.
+4. Click the extension's icon in your toolbar, sign in with the **same
+   account** you registered on the dashboard.
+5. Go to the dashboard's **Website Blocker** page and add a site (e.g.
+   `youtube.com`).
+6. Within a minute (or click "Sync blocklist now" in the popup for instantly),
+   visiting that site will redirect to a blocked page — and it'll show up on
+   the **Monitoring** page within a few seconds.
 
-```text
-http://localhost:5173
-```
+## Notes for tomorrow
 
----
-
-### 4. Load the Chrome Extension
-
-1. Open `chrome://extensions`
-2. Enable **Developer Mode**
-3. Click **Load Unpacked**
-4. Select the `extension` folder
-5. Sign in using the same account created on the dashboard
-6. Add websites from the **Website Blocker** page
-7. Start a distraction-free study session 🎯
-
----
-
-## 👥 Team Contributions
-
-### **Shubha** 
-
-* Developed the frontend interface and user experience.
-* Designed responsive dashboard pages.
-* Managed GitHub repository and project documentation.
-* Implemented website blocking functionality.
-
-### **Pragna**
-
-* Designed the overall system architecture.
-* Developed the Chrome Extension.
-* Coordinated project deliverables.
-* Tested, debugged, and refined the application.
-
-### **Kavya**
-
-* Developed backend services and REST APIs.
-* Implemented authentication and database integration.
-* Optimized backend functionality.
-
-### **Kruthika**
-
-* Implemented website blocking functionality.
-* Integrated the extension with the backend.
-* Assisted with planning, documentation, and testing.
-
----
-
-## 🚀 Future Scope
-
-The project is continuously evolving. Planned enhancements include:
-
-* AI-powered focus recommendations
-* Smarter productivity insights
-* Cross-device synchronization
-* Mobile application support
-* Enhanced analytics and reporting
-* Improved personalization features
-
----
-
-## 🙏 Acknowledgements
-
-This project is being developed as part of our **Final Year Engineering Project**.
-
-We sincerely thank our project guide, faculty members, and teammates for their continuous support, guidance, and encouragement throughout the development of this project.
-
----
-
-⭐ *If you found this project interesting, consider giving it a star.*
-
-
-
+- Everything defaults to `localhost` — fine for a single-machine demo. If you
+  need it to work across devices, the only change needed is swapping
+  `http://localhost:4000` for a real deployed URL in `frontend/src/api.js`,
+  `extension/popup.js`, and `extension/background.js`.
+- The database uses Node's **built-in** `node:sqlite` module (no native
+  compilation, no Visual Studio / Xcode tools needed — just works as long as
+  you're on Node 22.13+ / 23.4+ or newer). It's a single file
+  (`backend/focuslock.db`) — easy to inspect, back up, or reset (delete it and
+  restart the backend to get a fresh empty database).
