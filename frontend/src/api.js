@@ -20,7 +20,8 @@ export const api = {
   me: (token) => request("/api/auth/me", { token }),
   updateMe: (token, patch) => request("/api/auth/me", { method: "PATCH", body: patch, token }),
 
-  getBlocklist: (token) => request("/api/blocklist", { token }),
+  getBlocklist: (token, all = false) => request(all ? "/api/blocklist?all=true" : "/api/blocklist", { token }),
+
   addSite: (token, domain) => request("/api/blocklist", { method: "POST", body: { domain }, token }),
   toggleSite: (token, id, active) => request(`/api/blocklist/${id}`, { method: "PATCH", body: { active }, token }),
   removeSite: (token, id) => request(`/api/blocklist/${id}`, { method: "DELETE", token }),
